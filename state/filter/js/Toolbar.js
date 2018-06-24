@@ -5,6 +5,7 @@ const Toolbar = (props) => {
   const renderFilters = (filters) => {
     return filters.map((filter, i) => {
       const className = filter === selected ? "filter-selected" : "filter";
+
       return (
         <button
           className={className}
@@ -22,3 +23,4 @@ const Toolbar = (props) => {
     </div>
   );
 };
+

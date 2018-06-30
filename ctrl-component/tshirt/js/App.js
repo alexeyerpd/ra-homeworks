@@ -17,7 +17,7 @@ class App extends React.Component {
 
     selectFont = (selectedFont) => {
         this.setState({selectedFont});
-    }
+    };
 
     renderLines () {
         if (!this.state.selectedFont) return null;

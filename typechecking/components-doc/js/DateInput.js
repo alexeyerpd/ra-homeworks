@@ -1,6 +1,6 @@
 'use strict';
 
-const DateInput = props => {
+const DateInput = (props) => {
   return (
     <div className="form-group">
       <label>{props.label}</label>
@@ -9,3 +9,12 @@ const DateInput = props => {
     </div>
   )
 };
+
+DateInput.propTypes = {
+  name: PropTypes.string,
+  onChange: PropTypes.func,
+  value: PropTypes.string,
+  required: PropTypes.bool
+};
+
+// new Date().toISOString().split(/T/)[0]

@@ -1,6 +1,7 @@
 'use strict';
 
 const TextInput = props => {
+  console.log(props);
   return (
     <div className="form-group">
       <label>{props.label}</label>
@@ -8,4 +9,13 @@ const TextInput = props => {
              value={props.value} required={props.required}/>
     </div>
   )
+};
+
+TextInput.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string,
+  onChange: PropTypes.func,
+  required: PropTypes.bool,
+  value: PropTypes.string,
+  type: PropTypes.string
 };

@@ -1,5 +1,7 @@
 'use strict';
 
+'use strict';
+
 const profileStyle = {
   border: '1px solid #cccccc',
   borderRadius: '5px',
@@ -13,10 +15,57 @@ const imageStyle = {
   height: '200px'
 };
 
+const linkPropType = (props, propsName, componentName) => {
+  let prop = props[propsName];
+  const regExp = /https:\/\/vk.com\/(id[0-9]+|[A-Za-z0-9_-]+)/;
+
+  let isProp = typeof prop === 'string' && regExp.test(prop);
+  if (!isProp) {
+    return new Error(`Неверный параметр ${propsName} в компоненте ${componentName}`)
+  }
+
+  return null;
+};
+
+const birthdayPropType = (props, propsName, componentName) => {
+  let prop = props[propsName];
+  const regExp = /[\d]{4}\-[\d]{2}\-[\d]{2}/;
+  const data = new Date(prop);
+
+  let isProp = typeof prop === 'string' && regExp.test(prop) && data <= new Date();
+  if (!isProp) {
+    return new Error(`Неверный параметр ${propsName} в компоненте ${componentName}`)
+  }
+
+  return null;
+};
+
+
+
+const createChainableTypeChecker = (validate) => {
+  const checkType = (isRequired, props, propsName, componentName) => {
+    if (props[propsName] === null) {
+      if (isRequired) {
+        return new Error(`Обязательный атрибут ${propsName} не был передан компоненту ${componentName}`)
+      }
+      return null;
+    } else {
+      return validate(props, propsName, componentName);
+    }
+  };
+
+  let chainedCheckType = checkType.bind(null, false);
+  chainedCheckType.isRequired = checkType.bind(null, true);
+
+  return chainedCheckType;
+};
+
+const birthdayPropTypeChecker = createChainableTypeChecker(birthdayPropType);
+const linkPropTypeChecker = createChainableTypeChecker(linkPropType);
+
 class Profile extends React.Component {
   constructor(props) {
     super(props);
-
   }
 
   static get defaultProps() {
@@ -28,27 +77,28 @@ class Profile extends React.Component {
   static get propTypes() {
     return {
       img: PropTypes.string,
-      birthday: PropTypes.string,
+      birthday: birthdayPropTypeChecker,
       first_name: PropTypes.string,
       last_name: PropTypes.string,
-      url: PropTypes.string
+      url: linkPropTypeChecker
     }
   }
 
   checkDate = (birthday) => {
-    if (/[\d]{4}\-[\d]{2}\-[\d]{2}/.test("2018-06-08")) {
+    if (/[\d]{4}\-[\d]{2}\-[\d]{2}/.test(birthday)) {
       const data = new Date(birthday);
       if (data <= new Date()) {
         return data.toISOString().split(/T/)[0];
       } else {
         return new Date().toISOString().split(/T/)[0];
       }
+    } else {
+      return new Date().toISOString().split(/T/)[0];
     }
   };
 
   checkLink = (link) => {
     const regExp = /https:\/\/vk.com\/(id[0-9]+|[A-Za-z0-9_-]+)/;
-
     if (regExp.test(link)) {
       return link;
     } else {
